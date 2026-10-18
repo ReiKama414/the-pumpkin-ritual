@@ -1,6 +1,6 @@
 type Cue = 'open' | 'close' | 'morph' | 'midnight'
 
-const BGM_URL = '/audio/bgm_after_midnight.mp3'
+const BGM_URL = `${import.meta.env.BASE_URL}audio/bgm_after_midnight.mp3`
 
 class RitualAudio {
   private context: AudioContext | null = null

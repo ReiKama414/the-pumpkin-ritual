@@ -5,3 +5,4 @@ dist/
 *.tsbuildinfo
 *.log
 .DS_Store
+public/audio/*_raw.flac
