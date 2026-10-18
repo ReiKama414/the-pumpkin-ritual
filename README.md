@@ -41,7 +41,7 @@ Built for anyone who wants a small, craft-heavy WebGL vignette that still feels 
 - **Ritual choreography** — exploded petals keep full 3D meshes; foliage lifts with the same separation driver  
 - **Scroll narrative** — five chapters via scroll or keyboard; chapter dots jump to a stage  
 - **Midnight Ritual** — triple-click easter egg; finish to unlock a secret Classic face  
-- **Procedural audio** — Web Audio API synthesis only; sound stays off until you enable it  
+- **Night BGM + cues** — looping ACE-Step ambient bed plus Web Audio cues; sound stays off until you enable it  
 - **Accessible shell** — native About modal, reduced-motion path, labeled SVG fallback when WebGL fails  
 - **Performance guardrails** — adaptive DPR cap (1.6) and quality-aware postprocessing  
 

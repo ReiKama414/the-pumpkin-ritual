@@ -1,9 +1,14 @@
 type Cue = 'open' | 'close' | 'morph' | 'midnight'
 
+const BGM_URL = '/audio/bgm_after_midnight.mp3'
+
 class RitualAudio {
   private context: AudioContext | null = null
   private master: GainNode | null = null
   private ambient: AudioNode[] = []
+  private bgm: HTMLAudioElement | null = null
+  private bgmGain: GainNode | null = null
+  private bgmSource: MediaElementAudioSourceNode | null = null
   private enabled = false
 
   async setEnabled(enabled: boolean) {
@@ -12,11 +17,20 @@ class RitualAudio {
       if (this.context && this.master) {
         this.master.gain.setTargetAtTime(0, this.context.currentTime, .2)
       }
+      if (this.bgm) {
+        this.bgm.pause()
+      }
       return
     }
     if (!this.context) this.init()
     await this.context!.resume()
     this.master!.gain.setTargetAtTime(.42, this.context!.currentTime, .6)
+    await this.ensureBgm()
+    try {
+      await this.bgm!.play()
+    } catch {
+      // Autoplay may still be blocked until a later gesture; cues remain available.
+    }
   }
 
   private init() {
@@ -43,23 +57,43 @@ class RitualAudio {
     filter.type = 'lowpass'
     filter.frequency.value = 650
     const windGain = ctx.createGain()
-    windGain.gain.value = .38
+    windGain.gain.value = .22
     wind.connect(filter).connect(windGain).connect(master)
     wind.start()
     const lfo = ctx.createOscillator()
     const modulation = ctx.createGain()
     lfo.frequency.value = .09
-    modulation.gain.value = .12
+    modulation.gain.value = .08
     lfo.connect(modulation).connect(windGain.gain)
     lfo.start()
     const hum = ctx.createOscillator()
     hum.type = 'sine'
     hum.frequency.value = 54
     const humGain = ctx.createGain()
-    humGain.gain.value = .055
+    humGain.gain.value = .035
     hum.connect(humGain).connect(master)
     hum.start()
     this.ambient = [wind, lfo, hum]
+  }
+
+  private async ensureBgm() {
+    if (!this.context || !this.master) return
+    if (this.bgm) return
+    const el = this.bgm = new Audio(BGM_URL)
+    el.loop = true
+    el.preload = 'auto'
+    el.crossOrigin = 'anonymous'
+    const gain = this.bgmGain = this.context.createGain()
+    gain.gain.value = .55
+    const source = this.bgmSource = this.context.createMediaElementSource(el)
+    source.connect(gain).connect(this.master)
+    await new Promise<void>((resolve) => {
+      if (el.readyState >= 2) resolve()
+      else el.addEventListener('canplaythrough', () => resolve(), { once: true })
+      el.load()
+      // Don't hang forever if the asset is missing during local WIP.
+      setTimeout(() => resolve(), 2500)
+    })
   }
 
   cue(kind: Cue) {
@@ -98,6 +132,12 @@ class RitualAudio {
 
   dispose() {
     this.ambient.forEach(node => node.disconnect())
+    this.bgm?.pause()
+    this.bgmSource?.disconnect()
+    this.bgmGain?.disconnect()
+    this.bgm = null
+    this.bgmSource = null
+    this.bgmGain = null
     this.context?.close()
     this.context = null
     this.master = null

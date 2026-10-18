@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { ArrowDown, ArrowRight, ArrowUpRight, RotateCcw, Volume2, VolumeX, X, MoveHorizontal, Sparkles as SparkleIcon } from 'lucide-react'
+import { ArrowDown, ArrowRight, ArrowUpRight, Github, Globe, RotateCcw, Volume2, VolumeX, X, MoveHorizontal, Sparkles as SparkleIcon } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Scene from './Scene'
@@ -29,7 +29,7 @@ function SpiritPicker() {
   const busy = useRitual(s => s.busy)
   const setForm = useRitual(s => s.setForm)
   return <div className="spirit-picker" role="group" aria-label="Choose your pumpkin spirit">
-    <span className="picker-caption">CHOOSE YOUR SPIRIT <span>↘</span></span>
+    <span className="picker-caption">CHOOSE YOUR SPIRIT <span aria-hidden="true">→</span></span>
     <div className="spirit-options">
       {forms.map((name, i) => <button key={name} className={`spirit ${form === name ? 'active' : ''}`} disabled={busy}
         onClick={() => setForm(name)} aria-pressed={form === name} title={`${name} · keyboard ${i + 1}`}>
@@ -193,6 +193,13 @@ export default function App() {
             {sound ? <Volume2 size={15}/> : <VolumeX size={15}/>}<span>SOUND {sound ? 'ON' : 'OFF'}</span>
           </button>
           <button className="restart-button" onClick={restart} aria-label="Restart the ritual" title="Restart"><RotateCcw size={15}/></button>
+          <span className="nav-divider"/>
+          <a className="nav-icon" href="https://reikama414.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Portfolio website" title="Website">
+            <Globe size={15}/>
+          </a>
+          <a className="nav-icon" href="https://github.com/ReiKama414/the-pumpkin-ritual" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository" title="GitHub">
+            <Github size={15}/>
+          </a>
         </nav>
       </header>
 
@@ -214,8 +221,12 @@ export default function App() {
     </main>
     <About />
     <div className={`loading-screen ${ready ? 'loaded' : ''}`} aria-hidden={ready}>
-      <span className="loading-star">✦</span><span className="loading-title">The Pumpkin Ritual</span>
-      <span className="loading-line"/><span className="loading-caption">GATHERING A LITTLE DARKNESS</span>
+      <span className="loading-star">✦</span>
+      <span className="loading-title">The Pumpkin Ritual</span>
+      <div className="loading-progress">
+        <span className="loading-line" aria-hidden="true" />
+        <span className="loading-caption">GATHERING A LITTLE DARKNESS</span>
+      </div>
     </div>
   </>
 }

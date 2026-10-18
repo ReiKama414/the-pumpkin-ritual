@@ -165,7 +165,8 @@ function Terrace() {
   useEffect(() => {
     let i = 0
     for (let row = 0; row < 38; row++) for (let col = 0; col < 4; col++) {
-      dummy.position.set((col - 1.5) * 5.52 + (row % 2) * 1.7, -1.25, 7 - row * .59)
+      // Keep boards slightly lower so plank seams sit under the UI chrome, not through titles.
+      dummy.position.set((col - 1.5) * 5.52 + (row % 2) * 1.7, -1.38, 7 - row * .59)
       dummy.rotation.set(0, 0, 0)
       dummy.scale.set(1, 1, 1)
       dummy.updateMatrix()
@@ -179,7 +180,7 @@ function Terrace() {
   }, [geometry, material])
   return <>
     <instancedMesh ref={boards} args={[geometry, material, 152]} receiveShadow />
-    <group position={[0, -1.17, -7.8]}>
+    <group position={[0, -1.3, -7.8]}>
       {[-.03, 1.05].map(y => <mesh key={y} position={[0, y, 0]} castShadow>
         <boxGeometry args={[22, .09, .13]} />
         <meshStandardMaterial color="hsl(250, 10%, 5%)" roughness={.82} />
